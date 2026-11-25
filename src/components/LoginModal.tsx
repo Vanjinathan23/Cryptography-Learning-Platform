@@ -52,6 +52,16 @@ function generateHexSalt(bytes = 16): string {
   return Math.random().toString(16).substring(2, 18).padStart(32, '0');
 }
 
+function validatePasswordPolicy(pwd: string): { valid: boolean; error?: string } {
+  if (!pwd || pwd.length < 8) {
+    return { valid: false, error: 'Password must be at least 8 characters long.' };
+  }
+  if (!/[^a-zA-Z0-9]/.test(pwd)) {
+    return { valid: false, error: 'Password must contain at least one special character (!@#$%^&* etc.).' };
+  }
+  return { valid: true };
+}
+
 export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginModalProps) {
   const currentUser = db.getUser();
 
@@ -62,7 +72,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
 
   // Sign In fields
   const [loginIdentifier, setLoginIdentifier] = useState('CryptoStudent');
-  const [loginPassword, setLoginPassword] = useState('supersecret123');
+  const [loginPassword, setLoginPassword] = useState('Crypto@2026');
 
   // Register fields
   const [regUsername, setRegUsername] = useState('');
@@ -99,6 +109,12 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
       return;
     }
 
+    const pwdCheck = validatePasswordPolicy(loginPassword);
+    if (!pwdCheck.valid) {
+      setErrorMsg(pwdCheck.error || 'Password must be at least 8 characters with at least one special character.');
+      return;
+    }
+
     const result = db.authenticate(loginIdentifier);
     if (!result.success || !result.user) {
       setErrorMsg(result.error || 'Authentication failed. Please verify credentials.');
@@ -124,8 +140,9 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
       setErrorMsg('Please enter a valid email.');
       return;
     }
-    if (!regPassword || regPassword.length < 6) {
-      setErrorMsg('Password must be at least 6 characters.');
+    const pwdCheck = validatePasswordPolicy(regPassword);
+    if (!pwdCheck.valid) {
+      setErrorMsg(pwdCheck.error || 'Password must be at least 8 characters with at least one special character.');
       return;
     }
 
@@ -397,14 +414,24 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 800, color: 'var(--ink)', marginBottom: 4 }}>
-                  Password
-                </label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <label style={{ fontSize: 11.5, fontWeight: 800, color: 'var(--ink)' }}>
+                    Password
+                  </label>
+                  <div style={{ display: 'flex', gap: 6, fontSize: 10.5, fontWeight: 700 }}>
+                    <span style={{ color: loginPassword.length >= 8 ? 'var(--green-3)' : 'var(--muted)' }}>
+                      {loginPassword.length >= 8 ? '✓ 8+ chars' : '○ 8+ chars'}
+                    </span>
+                    <span style={{ color: /[^a-zA-Z0-9]/.test(loginPassword) ? 'var(--green-3)' : 'var(--muted)' }}>
+                      {/[^a-zA-Z0-9]/.test(loginPassword) ? '✓ 1+ special char' : '○ 1+ special char'}
+                    </span>
+                  </div>
+                </div>
                 <input
                   type="password"
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
-                  placeholder="••••••••••••"
+                  placeholder="Min 8 chars + 1 special char"
                   required
                   style={{
                     width: '100%',
@@ -486,14 +513,24 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 800, color: 'var(--ink)', marginBottom: 4 }}>
-                  Password
-                </label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <label style={{ fontSize: 11.5, fontWeight: 800, color: 'var(--ink)' }}>
+                    Password
+                  </label>
+                  <div style={{ display: 'flex', gap: 6, fontSize: 10.5, fontWeight: 700 }}>
+                    <span style={{ color: regPassword.length >= 8 ? 'var(--green-3)' : 'var(--muted)' }}>
+                      {regPassword.length >= 8 ? '✓ 8+ chars' : '○ 8+ chars'}
+                    </span>
+                    <span style={{ color: /[^a-zA-Z0-9]/.test(regPassword) ? 'var(--green-3)' : 'var(--muted)' }}>
+                      {/[^a-zA-Z0-9]/.test(regPassword) ? '✓ 1+ special char' : '○ 1+ special char'}
+                    </span>
+                  </div>
+                </div>
                 <input
                   type="password"
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
-                  placeholder="Min 6 characters"
+                  placeholder="Min 8 chars + 1 special char"
                   required
                   style={{
                     width: '100%',

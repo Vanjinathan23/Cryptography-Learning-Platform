@@ -21,7 +21,7 @@ const INITIAL_USER: UserRecord = {
   currentMissionId: 'm2-portal',
   createdAt: '2026-11-20T10:00:00Z',
   salt: '7a9f1b2c3d4e5f60',
-  passwordHash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+  passwordHash: 'cc1cd6672771caa512ef3cc57ffa6d0087287caa3dd2a853e8b58c661a4db2c6',
   lastLoginAt: '2026-11-25T08:00:00Z',
   avatarColor: '#2e7d32',
 };

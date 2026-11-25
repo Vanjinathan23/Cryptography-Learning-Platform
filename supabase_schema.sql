@@ -149,3 +149,4 @@ SELECT
 UNION ALL
 SELECT 
     'security_audit_logs', COUNT(*) FROM security_audit_logs;
+

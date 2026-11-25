@@ -51,6 +51,17 @@ function generateSalt(bytes = 16): string {
   return Math.random().toString(16).substring(2, 18).padStart(32, '0');
 }
 
+export function validatePasswordPolicy(pwd: string): { valid: boolean; error?: string } {
+  if (pwd.length < 8) {
+    return { valid: false, error: 'Password must be at least 8 characters long.' };
+  }
+  const hasSpecial = /[^a-zA-Z0-9]/.test(pwd);
+  if (!hasSpecial) {
+    return { valid: false, error: 'Password must contain at least one special character (!@#$%^&* etc.).' };
+  }
+  return { valid: true };
+}
+
 export default function LoginPage({
   onLoginSuccess,
   onBackToLanding,
@@ -63,7 +74,7 @@ export default function LoginPage({
 
   // Sign In fields
   const [identifier, setIdentifier] = useState('CryptoStudent');
-  const [password, setPassword] = useState('supersecret123');
+  const [password, setPassword] = useState('Crypto@2026');
 
   // Register fields
   const [regUsername, setRegUsername] = useState('');
@@ -92,6 +103,12 @@ export default function LoginPage({
       return;
     }
 
+    const pwdCheck = validatePasswordPolicy(password);
+    if (!pwdCheck.valid) {
+      setErrorMsg(pwdCheck.error || 'Password must be at least 8 characters with at least one special character.');
+      return;
+    }
+
     const res = db.authenticate(identifier);
     if (!res.success || !res.user) {
       setErrorMsg(res.error || 'Authentication failed. Please verify credentials.');
@@ -116,8 +133,10 @@ export default function LoginPage({
       setErrorMsg('Please enter a valid email address.');
       return;
     }
-    if (!regPassword || regPassword.length < 6) {
-      setErrorMsg('Password must be at least 6 characters.');
+
+    const pwdCheck = validatePasswordPolicy(regPassword);
+    if (!pwdCheck.valid) {
+      setErrorMsg(pwdCheck.error || 'Password must be at least 8 characters with at least one special character.');
       return;
     }
 
@@ -424,7 +443,7 @@ export default function LoginPage({
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                   <label style={{ fontSize: 12, fontWeight: 800, color: 'var(--ink)' }}>Password</label>
-                  <span style={{ fontSize: 11, color: 'var(--muted)' }}>Demo: any password works</span>
+                  <span style={{ fontSize: 11, color: 'var(--muted)' }}>Min 8 chars + 1 special char</span>
                 </div>
                 <div style={{ position: 'relative' }}>
                   <input
@@ -466,6 +485,15 @@ export default function LoginPage({
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
+                </div>
+                {/* Live Policy Indicators */}
+                <div style={{ display: 'flex', gap: 14, marginTop: 6, fontSize: 11, fontWeight: 700 }}>
+                  <span style={{ color: password.length >= 8 ? 'var(--green-3)' : 'var(--muted)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    {password.length >= 8 ? '✓' : '○'} 8+ characters
+                  </span>
+                  <span style={{ color: /[^a-zA-Z0-9]/.test(password) ? 'var(--green-3)' : 'var(--muted)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    {/[^a-zA-Z0-9]/.test(password) ? '✓' : '○'} 1+ special char (!@#$...)
+                  </span>
                 </div>
               </div>
 
@@ -560,14 +588,24 @@ export default function LoginPage({
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 800, color: 'var(--ink)', marginBottom: 6 }}>
-                  Password
-                </label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                  <label style={{ fontSize: 12, fontWeight: 800, color: 'var(--ink)' }}>
+                    Password
+                  </label>
+                  <div style={{ display: 'flex', gap: 6, fontSize: 11, fontWeight: 700 }}>
+                    <span style={{ color: regPassword.length >= 8 ? 'var(--green-3)' : 'var(--muted)' }}>
+                      {regPassword.length >= 8 ? '✓ 8+ chars' : '○ 8+ chars'}
+                    </span>
+                    <span style={{ color: /[^a-zA-Z0-9]/.test(regPassword) ? 'var(--green-3)' : 'var(--muted)' }}>
+                      {/[^a-zA-Z0-9]/.test(regPassword) ? '✓ 1+ special char' : '○ 1+ special char'}
+                    </span>
+                  </div>
+                </div>
                 <input
                   type="password"
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
-                  placeholder="Min 6 characters"
+                  placeholder="Min 8 chars + special char (e.g. Pass@123)"
                   required
                   style={{
                     width: '100%',
