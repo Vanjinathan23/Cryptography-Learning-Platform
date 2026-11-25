@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>CryptoScale — Interactive Cryptography &amp; Cybersecurity Course</title>
+    <meta name="description" content="Don't just learn how cryptography works. Experience it, explore it, and understand it through interactive 3D isometric visual simulations — Alice-to-Bob encryption, AES, RSA, Diffie-Hellman, SHA-256, and cyberattack defenses." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#f4ebe0" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CryptoScale" />
+    <meta property="og:title" content="CryptoScale — Interactive Cryptography &amp; Cybersecurity Course" />
+    <meta property="og:description" content="Don't just learn how cryptography works. Experience it, explore it, and understand it through interactive 3D isometric visual simulations." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      try {
+        if (JSON.parse(localStorage.getItem('crypto-sim:theme')) === 'dark') document.documentElement.dataset.theme = 'dark';
+      } catch (e) {}
+      var w = innerWidth, h = innerHeight;
+      document.documentElement.dataset.layout = w >= 1200 && h >= 560 ? 'desktop' : w >= 960 && h >= 600 ? 'tablet' : 'stack';
+    </script>
+    <link rel="stylesheet" href="/assets/index-CxX-BAVx.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

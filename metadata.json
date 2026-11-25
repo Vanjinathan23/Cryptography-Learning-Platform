@@ -1,0 +1,6 @@
+{
+  "name": "System Design — an interactive course",
+  "description": "CryptoScale: An interactive 3D isometric cryptography and cybersecurity virtual learning platform — experience Alice-to-Bob encryption, internet routing, AES, RSA, Diffie-Hellman, SHA-256, and live cyberattack defenses.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
